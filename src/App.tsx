@@ -36,39 +36,41 @@ class App extends React.Component<{}, IState> {
 
     const file = e.currentTarget.files && e.currentTarget.files[0];
 
-    if (file) {
-      const fileName = file.name;
-      const contentType = file.type;
-      const options = {
-        params: {
-          // TODO there should be some user specific data. send it to server also
-          // Key: `user/${fileName}`,
-          Key: fileName,
-          ContentType: contentType
-        },
-        headers: {
-          'Content-Type': contentType
-        }
-      };
+    if (file) this.uploadFile(file);
+  };
 
-      axios.get(
-        `${apiUrl}/presigned-url-put-object`,
-        options,
-      )
-        .then((response) => {
-          axios.put(response.data.url, file, options)
-            .then(res => {
-              this.generateGetUrl(fileName, res.headers['x-amz-version-id']);
-              this.sendDataToADA(file, res.headers['x-amz-version-id']);
-            })
-            .catch((error) => {
-              console.log(error);
-            })
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  uploadFile = (file: File) => {
+    const fileName = file.name;
+    const contentType = file.type;
+    const options = {
+      params: {
+        // TODO there should be some user specific data. send it to server also
+        // Key: `user/${fileName}`,
+        Key: fileName,
+        ContentType: contentType
+      },
+      headers: {
+        'Content-Type': contentType
+      }
+    };
+
+    axios.get(
+      `${apiUrl}/presigned-url-put-object`,
+      options,
+    )
+      .then((response) => {
+        axios.put(response.data.url, file, options)
+          .then(res => {
+            this.generateGetUrl(fileName, res.headers['x-amz-version-id']);
+            this.sendDataToADA(file, res.headers['x-amz-version-id']);
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   generateGetUrl = (Key: string, s3Key: string) => {
