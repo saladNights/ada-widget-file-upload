@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { apiUrl } from './config';
 
 import './App.scss';
 
@@ -51,13 +52,13 @@ class App extends React.Component<{}, IState> {
       };
 
       axios.get(
-        'https://hidden-everglades-39585.herokuapp.com/presigned-url-put-object',
+        `${apiUrl}/presigned-url-put-object`,
         options,
       )
         .then((response) => {
           axios.put(response.data.url, file, options)
             .then(res => {
-              this.generateGetUrl(fileName);
+              this.generateGetUrl(fileName, res.headers['x-amz-version-id']);
               this.sendDataToADA(file, res.headers['x-amz-version-id']);
             })
             .catch((error) => {
@@ -70,14 +71,15 @@ class App extends React.Component<{}, IState> {
     }
   };
 
-  generateGetUrl = (fileName: string) => {
+  generateGetUrl = (Key: string, s3Key: string) => {
     const options = {
       params: {
-        Key: fileName,
+        Key,
+        s3Key,
       }
     };
 
-    axios.get('https://hidden-everglades-39585.herokuapp.com/presigned-url-get-object', options)
+    axios.get(`${apiUrl}/presigned-url-get-object`, options)
       .then((res) => {
         this.setState({ getUrl: res.data.url });
       })
