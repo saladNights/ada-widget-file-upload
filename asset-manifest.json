@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/ada-widget-file-upload/static/css/main.05947373.chunk.css",
-    "main.js": "/ada-widget-file-upload/static/js/main.471fdf92.chunk.js",
-    "main.js.map": "/ada-widget-file-upload/static/js/main.471fdf92.chunk.js.map",
+    "main.js": "/ada-widget-file-upload/static/js/main.8f1ceacf.chunk.js",
+    "main.js.map": "/ada-widget-file-upload/static/js/main.8f1ceacf.chunk.js.map",
     "runtime-main.js": "/ada-widget-file-upload/static/js/runtime-main.c3610326.js",
     "runtime-main.js.map": "/ada-widget-file-upload/static/js/runtime-main.c3610326.js.map",
     "static/js/2.c05ab057.chunk.js": "/ada-widget-file-upload/static/js/2.c05ab057.chunk.js",
     "static/js/2.c05ab057.chunk.js.map": "/ada-widget-file-upload/static/js/2.c05ab057.chunk.js.map",
     "index.html": "/ada-widget-file-upload/index.html",
-    "precache-manifest.c9e4e8ee97a19390b9f34f15275144ed.js": "/ada-widget-file-upload/precache-manifest.c9e4e8ee97a19390b9f34f15275144ed.js",
+    "precache-manifest.d00bbee90d777ac2fbea30d01b43b666.js": "/ada-widget-file-upload/precache-manifest.d00bbee90d777ac2fbea30d01b43b666.js",
     "service-worker.js": "/ada-widget-file-upload/service-worker.js",
     "static/css/main.05947373.chunk.css.map": "/ada-widget-file-upload/static/css/main.05947373.chunk.css.map",
     "static/js/2.c05ab057.chunk.js.LICENSE.txt": "/ada-widget-file-upload/static/js/2.c05ab057.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.c3610326.js",
     "static/js/2.c05ab057.chunk.js",
     "static/css/main.05947373.chunk.css",
-    "static/js/main.471fdf92.chunk.js"
+    "static/js/main.8f1ceacf.chunk.js"
   ]
 }
