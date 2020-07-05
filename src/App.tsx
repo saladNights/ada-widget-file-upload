@@ -21,8 +21,6 @@ class App extends React.Component<{}, IState> {
     try {
       widgetSDK.init((event: any) => {
         console.log(event);
-        // Perform additional setup steps in here.
-        // event will be one of `WIDGET_INITIALIZED` or `WIDGET_INITIALIZATION_FAILED`
       });
     }
     
@@ -42,7 +40,9 @@ class App extends React.Component<{}, IState> {
       const contentType = file.type;
       const options = {
         params: {
-          Key: `user/${fileName}`,
+          // TODO there should be some user specific data. send it to server also
+          // Key: `user/${fileName}`,
+          Key: fileName,
           ContentType: contentType
         },
         headers: {
@@ -51,14 +51,14 @@ class App extends React.Component<{}, IState> {
       };
 
       axios.get(
-        'http://localhost:3001/presigned-url-put-object',
+        'https://hidden-everglades-39585.herokuapp.com/presigned-url-put-object',
         options,
       )
         .then((response) => {
           axios.put(response.data.url, file, options)
             .then(res => {
-              console.log(res);
               this.generateGetUrl(fileName);
+              this.sendDataToADA(file, res.headers['x-amz-version-id']);
             })
             .catch((error) => {
               console.log(error);
@@ -77,9 +77,8 @@ class App extends React.Component<{}, IState> {
       }
     };
 
-    axios.get('http://localhost:3001/presigned-url-get-object', options)
+    axios.get('https://hidden-everglades-39585.herokuapp.com/presigned-url-get-object', options)
       .then((res) => {
-        // TODO send link to ADA
         this.setState({ getUrl: res.data.url });
       })
       .catch((error) => {
@@ -87,8 +86,21 @@ class App extends React.Component<{}, IState> {
       });
   };
 
+  sendDataToADA = (file: File, key: string) => {
+    if (widgetSDK.widgetIsActive) {
+      console.log('send to ADA', file, key);
+      widgetSDK.sendUserData({
+        fileData: file,
+        s3Key: key
+      }, (event: any) => {
+        console.log('successfully sent');
+        console.log(event);
+      });
+    }
+  };
+
   render() {
-    const { errorMsg } = this.state;
+    const { getUrl, errorMsg } = this.state;
     return (
       <div className='wrapper'>
         <label htmlFor='file' className='custom-file-upload'>
@@ -96,8 +108,7 @@ class App extends React.Component<{}, IState> {
           Upload File
         </label>
         {errorMsg && (<div className='error'>{errorMsg}</div>)}
-        {/* for testing */}
-        {/*{getUrl && (<a href={getUrl} target='_blank' rel='noopener noreferrer'>Download</a>)}*/}
+        {getUrl && (<a href={getUrl} target='_blank' rel='noopener noreferrer' className='download-link'>Download</a>)}
       </div>
     );
   }
