@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ada-widgets.iml" filepath="$PROJECT_DIR$/.idea/ada-widgets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ada-widget-file-upload.iml" filepath="$PROJECT_DIR$/.idea/ada-widget-file-upload.iml" />
     </modules>
   </component>
 </project>

@@ -1,19 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="2013c703-db99-4c37-90fe-360f816445e8" name="Default Changelist" comment="" />
+    <list default="true" id="ee38be70-6693-4a51-95b8-7a9233e69917" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/helpers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ada-widget-file-upload.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ada-widget-file-upload.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="JsFlowSettings">
-    <service-enabled>true</service-enabled>
-    <exe-path />
-    <other-services-enabled>true</other-services-enabled>
-    <auto-save>true</auto-save>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="1e8SKnt4d3KKQJZktaHcbEO0Ev1" />
+  <component name="ProjectId" id="1eK4KsMdYcTdzwgRooL5lx8HgMo" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -21,79 +45,46 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.TypeScript" />
-    <property name="ts.external.directory.path" value="$PROJECT_DIR$/../ada-widget-file-upload/node_modules/typescript/lib" />
-  </component>
-  <component name="RunManager">
-    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="start" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="npm.start" />
-      </list>
-    </recent_temporary>
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2013c703-db99-4c37-90fe-360f816445e8" name="Default Changelist" comment="" />
-      <created>1593701665680</created>
+      <changelist id="ee38be70-6693-4a51-95b8-7a9233e69917" name="Default Changelist" comment="" />
+      <created>1594056889588</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1593701665680</updated>
-      <workItem from="1593701667009" duration="1305000" />
-      <workItem from="1593703166128" duration="1392000" />
-      <workItem from="1593858715338" duration="22991000" />
+      <updated>1594056889588</updated>
+      <workItem from="1594056890811" duration="1240000" />
+      <workItem from="1594130000075" duration="228000" />
+      <workItem from="1594274061808" duration="271000" />
+      <workItem from="1594301554898" duration="7871000" />
+      <workItem from="1594379737630" duration="11406000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
   </component>
-  <component name="WindowStateProjectService">
-    <state width="1419" height="210" key="GridCell.Tab.0.bottom" timestamp="1593754558155">
-      <screen x="0" y="23" width="1440" height="825" />
-    </state>
-    <state width="1419" height="210" key="GridCell.Tab.0.bottom/0.23.1440.825@0.23.1440.825" timestamp="1593754558155" />
-    <state width="1419" height="210" key="GridCell.Tab.0.bottom/0.23.1440.826@0.23.1440.826" timestamp="1593703376586" />
-    <state width="1419" height="210" key="GridCell.Tab.0.center" timestamp="1593754558153">
-      <screen x="0" y="23" width="1440" height="825" />
-    </state>
-    <state width="1419" height="210" key="GridCell.Tab.0.center/0.23.1440.825@0.23.1440.825" timestamp="1593754558153" />
-    <state width="1419" height="210" key="GridCell.Tab.0.center/0.23.1440.826@0.23.1440.826" timestamp="1593703376585" />
-    <state width="1419" height="210" key="GridCell.Tab.0.left" timestamp="1593754558150">
-      <screen x="0" y="23" width="1440" height="825" />
-    </state>
-    <state width="1419" height="210" key="GridCell.Tab.0.left/0.23.1440.825@0.23.1440.825" timestamp="1593754558150" />
-    <state width="1419" height="210" key="GridCell.Tab.0.left/0.23.1440.826@0.23.1440.826" timestamp="1593703376585" />
-    <state width="1419" height="210" key="GridCell.Tab.0.right" timestamp="1593754558153">
-      <screen x="0" y="23" width="1440" height="825" />
-    </state>
-    <state width="1419" height="210" key="GridCell.Tab.0.right/0.23.1440.825@0.23.1440.825" timestamp="1593754558153" />
-    <state width="1419" height="210" key="GridCell.Tab.0.right/0.23.1440.826@0.23.1440.826" timestamp="1593703376585" />
-    <state x="221" y="72" key="SettingsEditor" timestamp="1593861130983">
-      <screen x="0" y="23" width="1440" height="823" />
-    </state>
-    <state x="221" y="72" key="SettingsEditor/0.23.1440.823@0.23.1440.823" timestamp="1593861130983" />
-    <state x="421" y="188" width="598" height="548" key="find.popup" timestamp="1593859158601">
-      <screen x="0" y="23" width="1440" height="822" />
-    </state>
-    <state x="421" y="188" width="598" height="548" key="find.popup/0.23.1440.822@0.23.1440.822" timestamp="1593859158601" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
