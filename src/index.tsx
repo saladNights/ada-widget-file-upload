@@ -4,8 +4,6 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-// TODO add env var
-
 ReactDOM.render(
   <React.StrictMode>
     <App />

@@ -12,13 +12,16 @@ const widgetSDK = new AdaWidgetSDK();
 interface IProps {}
 
 interface IState {
+  isLoading: boolean;
+  isActive: boolean;
+  s3AccessKeyId: string;
+  s3SecretAccessKey: string;
+  bucketName: string;
   errorMsgs: {
     [key: string]: string;
   };
   errors: string[];
   validationErrors: string[];
-  isLoading: boolean;
-  isActive: boolean;
   maxFileSize: number;
   allowedFileExtensions?: Array<string>;
   uploadPath: string;
@@ -26,13 +29,16 @@ interface IState {
 
 class App extends React.Component<IProps, IState> {
   state = {
+    isLoading: false,
+    isActive: false,
+    s3AccessKeyId: '',
+    s3SecretAccessKey: '',
+    bucketName: '',
     errorMsgs: {
       initialized: 'ADA SDK could not be initialized',
     },
     errors: [],
     validationErrors: [],
-    isLoading: false,
-    isActive: false,
     maxFileSize: 10,
     allowedFileExtensions: undefined,
     uploadPath: '',
@@ -43,10 +49,12 @@ class App extends React.Component<IProps, IState> {
 
     try {
       widgetSDK.init((event: any) => {
-        console.log(event);
         if (event.type === 'WIDGET_INITIALIZED') {
           this.setState({
             isActive: true,
+            s3AccessKeyId: event.metaData?.s3_access_key_id,
+            s3SecretAccessKey: event.metaData?.s3_secret_access_key,
+            bucketName: event.metaData?.bucket_name,
             uploadPath: event.metaData?.upload_path || event.metaData?.chatterToken || 'uploads',
             maxFileSize: +event.metaData?.max_file_size || 10,
             allowedFileExtensions: event.metaData?.allowed_file_extensions?.split(', '),
@@ -57,14 +65,12 @@ class App extends React.Component<IProps, IState> {
                 || `File size should be less than ${+event.metaData?.max_file_size || 10} Mb`,
               allowedFileExtensions: event.metaData?.allowed_file_extensions_msg
                 || `File extension should be one of the list: ${event.metaData?.allowed_file_extensions}`,
-            }
+            },
           });
         }
       });
     }
-
     catch (e) {
-      console.error('ADA SDK could not be initialized');
       this.setState({
         errors: ['initialized']
       });
@@ -73,11 +79,9 @@ class App extends React.Component<IProps, IState> {
 
   componentDidUpdate(prevProps: IProps, prevState: IState) {
     if (!widgetSDK.widgetIsActive && prevState.isActive) this.setState({ isActive: false });
-
-    console.log(this.state);
   }
 
-  isFileVerified = (file: File) => {
+  isFileValid = (file: File) => {
     const { maxFileSize, allowedFileExtensions } = this.state;
     const currentErrors = [];
 
@@ -113,64 +117,97 @@ class App extends React.Component<IProps, IState> {
 
     const file = e.currentTarget.files && e.currentTarget.files[0];
 
-    if (file && this.isFileVerified(file)) this.uploadFile(file);
+    if (file && this.isFileValid(file)) this.uploadFile(file);
   };
 
-  uploadFile = (file: File) => {
-    const { uploadPath } = this.state;
+  createGetUrl = async (fileName: string, s3Key: string): Promise<string> => {
+    const {
+      s3AccessKeyId, s3SecretAccessKey, bucketName, uploadPath
+    } = this.state;
+    const options = {
+      params: {
+        BucketName: bucketName,
+        Key: `${uploadPath}/${fileName}`,
+        s3Key
+      },
+      headers: {
+        'X-S3-P-Key': s3AccessKeyId,
+        'X-S3-S-Key': s3SecretAccessKey,
+      }
+    };
+    let getUrl = '';
+
+    const { data } = await axios.get(
+      `${apiUrl}/presigned-url-get-object`,
+      options,
+    );
+
+    if (data.url) getUrl = data.url;
+
+    return getUrl;
+  };
+
+  uploadFile = async (file: File) => {
+    const {
+      s3AccessKeyId, s3SecretAccessKey, bucketName, uploadPath,
+    } = this.state;
     const fileName = file.name;
     const contentType = file.type;
     const options = {
       params: {
+        BucketName: bucketName,
         Key: `${uploadPath}/${fileName}`,
-        ContentType: contentType
+        ContentType: contentType,
       },
       headers: {
-        'Content-Type': contentType
+        'Content-Type': contentType,
+        'X-S3-P-Key': s3AccessKeyId,
+        'X-S3-S-Key': s3SecretAccessKey,
       }
     };
 
     this.setState({ isLoading: true });
 
-    axios.get(
-      `${apiUrl}/presigned-url-put-object`,
-      options,
-    )
-      .then((response) => {
-        axios.put(response.data.url, file, options)
-          .then(res => {
-            this.sendDataToADA(file, res.headers['x-amz-version-id']);
+    try {
+      const { data } = await axios.get(
+        `${apiUrl}/presigned-url-put-object`,
+        options,
+      );
+      try {
+        const { headers } = await axios.put(data.url, file, options);
+        const presignedDownloadUrl = await this.createGetUrl(fileName, headers['x-amz-version-id']);
 
-            this.setState({ isLoading: false });
-          })
-          .catch((error) => {
-            console.error(error);
-          })
-      })
-      .catch((error) => {
+        this.sendDataToADA(file, headers['x-amz-version-id'], presignedDownloadUrl);
+
+        this.setState({ isLoading: false });
+      } catch (error) {
         console.error(error);
-      });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  sendDataToADA = (file: File, key: string) => {
+  sendDataToADA = (file: File, s3Key: string, presignedDownloadUrl: string) => {
     if (widgetSDK.widgetIsActive) {
       widgetSDK.sendUserData({
-        fileData: file,
-        s3Key: key
-      }, (event: any) => {
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        s3Key,
+        presignedDownloadUrl,
+      }, () => {
         this.setState({ isActive: false });
       });
     }
   };
 
   render() {
-    const { errorMsgs, errors, validationErrors, isLoading, isActive } = this.state;
+    const { isLoading, isActive, errorMsgs, errors, validationErrors } = this.state;
     let btnClass = styles.disabledFileUploadBtn;
 
     if (isActive) btnClass = styles.fileUploadBtn;
     if (isLoading) btnClass = styles.loadingFileUploadBtn;
-
-    console.log({ errorMsgs, errors, validationErrors });
 
     return (
       <div className={styles.wrapper}>
