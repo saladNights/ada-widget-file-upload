@@ -15,6 +15,7 @@ interface IState {
   isLoading: boolean;
   isActive: boolean;
   s3AccessKeyId: string;
+  s3UrlExpire: number;
   s3SecretAccessKey: string;
   bucketName: string;
   errorMsgs: {
@@ -32,6 +33,7 @@ class App extends React.Component<IProps, IState> {
     isLoading: false,
     isActive: false,
     s3AccessKeyId: '',
+    s3UrlExpire: 86400,
     s3SecretAccessKey: '',
     bucketName: '',
     errorMsgs: {
@@ -53,6 +55,7 @@ class App extends React.Component<IProps, IState> {
           this.setState({
             isActive: true,
             s3AccessKeyId: event.metaData?.s3_access_key_id,
+            s3UrlExpire: event.metaData?.s3_url_expire || 86400,
             s3SecretAccessKey: event.metaData?.s3_secret_access_key,
             bucketName: event.metaData?.bucket_name,
             uploadPath: event.metaData?.upload_path || event.metaData?.chatterToken || 'uploads',
@@ -122,13 +125,14 @@ class App extends React.Component<IProps, IState> {
 
   createGetUrl = async (fileName: string, s3Key: string): Promise<string> => {
     const {
-      s3AccessKeyId, s3SecretAccessKey, bucketName, uploadPath
+      s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath
     } = this.state;
     const options = {
       params: {
         BucketName: bucketName,
         Key: `${uploadPath}/${fileName}`,
-        s3Key
+        s3Key,
+        s3UrlExpire,
       },
       headers: {
         'X-S3-P-Key': s3AccessKeyId,
@@ -149,7 +153,7 @@ class App extends React.Component<IProps, IState> {
 
   uploadFile = async (file: File) => {
     const {
-      s3AccessKeyId, s3SecretAccessKey, bucketName, uploadPath,
+      s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath,
     } = this.state;
     const fileName = file.name;
     const contentType = file.type;
@@ -158,6 +162,7 @@ class App extends React.Component<IProps, IState> {
         BucketName: bucketName,
         Key: `${uploadPath}/${fileName}`,
         ContentType: contentType,
+        s3UrlExpire,
       },
       headers: {
         'Content-Type': contentType,
