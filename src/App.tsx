@@ -55,7 +55,7 @@ class App extends React.Component<IProps, IState> {
           this.setState({
             isActive: true,
             s3AccessKeyId: event.metaData?.s3_access_key_id,
-            s3UrlExpire: event.metaData?.s3_url_expire || 86400,
+            s3UrlExpire: +event.metaData?.s3_url_expire || 86400,
             s3SecretAccessKey: event.metaData?.s3_secret_access_key,
             bucketName: event.metaData?.bucket_name,
             uploadPath: event.metaData?.upload_path || event.metaData?.chatterToken || 'uploads',
@@ -187,9 +187,17 @@ class App extends React.Component<IProps, IState> {
         this.setState({ isLoading: false });
       } catch (error) {
         console.error(error);
+        this.setState({
+          isActive: false,
+          isLoading: false,
+        });
       }
     } catch (error) {
       console.error(error);
+      this.setState({
+        isActive: false,
+        isLoading: false,
+      });
     }
   };
 
