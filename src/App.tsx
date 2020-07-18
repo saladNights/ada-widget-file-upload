@@ -9,8 +9,6 @@ import styles from './App.module.scss';
 const AdaWidgetSDK = require('@ada-support/ada-widget-sdk');
 const widgetSDK = new AdaWidgetSDK();
 
-interface IProps {}
-
 interface IState {
   isLoading: boolean;
   isActive: boolean;
@@ -24,11 +22,11 @@ interface IState {
   errors: string[];
   validationErrors: string[];
   maxFileSize: number;
-  allowedFileExtensions?: Array<string>;
+  allowedFileExtensions: string[];
   uploadPath: string;
 }
 
-class App extends React.Component<IProps, IState> {
+class App extends React.Component<any, IState> {
   state = {
     isLoading: false,
     isActive: false,
@@ -42,7 +40,7 @@ class App extends React.Component<IProps, IState> {
     errors: [],
     validationErrors: [],
     maxFileSize: 10,
-    allowedFileExtensions: undefined,
+    allowedFileExtensions: [],
     uploadPath: '',
   };
 
@@ -60,45 +58,42 @@ class App extends React.Component<IProps, IState> {
             bucketName: event.metaData?.bucket_name,
             uploadPath: event.metaData?.upload_path || event.metaData?.chatterToken || 'uploads',
             maxFileSize: +event.metaData?.max_file_size || 10,
-            allowedFileExtensions: event.metaData?.allowed_file_extensions?.split(', '),
+            allowedFileExtensions: event.metaData?.allowed_file_extensions?.split(', ') || [],
             errorMsgs: {
               ...errorMsgs,
               maxFileSize:
-                event.metaData?.max_file_size_msg
-                || `File size should be less than ${+event.metaData?.max_file_size || 10} Mb`,
-              allowedFileExtensions: event.metaData?.allowed_file_extensions_msg
-                || `File extension should be one of the list: ${event.metaData?.allowed_file_extensions}`,
+                event.metaData?.max_file_size_msg ||
+                `File size should be less than ${+event.metaData?.max_file_size || 10} Mb`,
+              allowedFileExtensions:
+                event.metaData?.allowed_file_extensions_msg ||
+                `File extension should be one of the list: ${event.metaData?.allowed_file_extensions}`,
             },
           });
         }
       });
-    }
-    catch (e) {
+    } catch (e) {
       this.setState({
-        errors: ['initialized']
+        errors: ['initialized'],
       });
     }
   }
 
-  componentDidUpdate(prevProps: IProps, prevState: IState) {
+  componentDidUpdate(prevProps: any, prevState: IState) {
     if (!widgetSDK.widgetIsActive && prevState.isActive) this.setState({ isActive: false });
   }
 
   isFileValid = (file: File) => {
-    const { maxFileSize, allowedFileExtensions } = this.state;
+    const { maxFileSize, allowedFileExtensions }: { maxFileSize: number; allowedFileExtensions: string[] } = this.state;
     const currentErrors = [];
 
-    if (file.size > (maxFileSize * 1048576)) {
+    if (file.size > maxFileSize * 1048576) {
       currentErrors.push('maxFileSize');
     }
 
-    if (allowedFileExtensions) {
-      const fileExtension = getFileExtension(file.name);
+    const fileExtension = getFileExtension(file.name);
 
-      // @ts-ignore
-      if (!allowedFileExtensions.includes(fileExtension)) {
-        currentErrors.push('allowedFileExtensions');
-      }
+    if (fileExtension && !allowedFileExtensions.includes(fileExtension)) {
+      currentErrors.push('allowedFileExtensions');
     }
 
     if (currentErrors.length) {
@@ -110,7 +105,7 @@ class App extends React.Component<IProps, IState> {
 
       return true;
     }
-  }
+  };
 
   onChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
     const { isLoading, isActive } = this.state;
@@ -124,9 +119,7 @@ class App extends React.Component<IProps, IState> {
   };
 
   createGetUrl = async (fileName: string, s3Key: string): Promise<string> => {
-    const {
-      s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath
-    } = this.state;
+    const { s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath } = this.state;
     const options = {
       params: {
         BucketName: bucketName,
@@ -137,14 +130,11 @@ class App extends React.Component<IProps, IState> {
       headers: {
         'X-S3-P-Key': s3AccessKeyId,
         'X-S3-S-Key': s3SecretAccessKey,
-      }
+      },
     };
     let getUrl = '';
 
-    const { data } = await axios.get(
-      `${apiUrl}/presigned-url-get-object`,
-      options,
-    );
+    const { data } = await axios.get(`${apiUrl}/presigned-url-get-object`, options);
 
     if (data.url) getUrl = data.url;
 
@@ -152,9 +142,7 @@ class App extends React.Component<IProps, IState> {
   };
 
   uploadFile = async (file: File) => {
-    const {
-      s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath,
-    } = this.state;
+    const { s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath } = this.state;
     const fileName = file.name;
     const contentType = file.type;
     const options = {
@@ -168,16 +156,13 @@ class App extends React.Component<IProps, IState> {
         'Content-Type': contentType,
         'X-S3-P-Key': s3AccessKeyId,
         'X-S3-S-Key': s3SecretAccessKey,
-      }
+      },
     };
 
     this.setState({ isLoading: true });
 
     try {
-      const { data } = await axios.get(
-        `${apiUrl}/presigned-url-put-object`,
-        options,
-      );
+      const { data } = await axios.get(`${apiUrl}/presigned-url-put-object`, options);
       try {
         const { headers } = await axios.put(data.url, file, options);
         const presignedDownloadUrl = await this.createGetUrl(fileName, headers['x-amz-version-id']);
@@ -203,15 +188,18 @@ class App extends React.Component<IProps, IState> {
 
   sendDataToADA = (file: File, s3Key: string, presignedDownloadUrl: string) => {
     if (widgetSDK.widgetIsActive) {
-      widgetSDK.sendUserData({
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        s3Key,
-        presignedDownloadUrl,
-      }, () => {
-        this.setState({ isActive: false });
-      });
+      widgetSDK.sendUserData(
+        {
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          s3Key,
+          presignedDownloadUrl,
+        },
+        () => {
+          this.setState({ isActive: false });
+        },
+      );
     }
   };
 
@@ -224,26 +212,21 @@ class App extends React.Component<IProps, IState> {
 
     return (
       <div className={styles.wrapper}>
-        <label
-          htmlFor='file'
-          className={btnClass}
-        >
-          <input
-            type='file'
-            name='file'
-            id='file'
-            onChange={this.onChangeHandler}
-            disabled={isLoading || !isActive}
-          />
+        <label htmlFor="file" className={btnClass}>
+          <input type="file" name="file" id="file" onChange={this.onChangeHandler} disabled={isLoading || !isActive} />
           <span className={styles.btnText}>Upload File</span>
-          {isLoading && (<div className={styles.loadingSpinner} />)}
+          {isLoading && <div className={styles.loadingSpinner} />}
         </label>
         <div className={styles.errorsWrapper}>
           {errors.map((error) => (
-            <div key={error} className={styles.error}>{errorMsgs[error]}</div>
+            <div key={error} className={styles.error}>
+              {errorMsgs[error]}
+            </div>
           ))}
           {validationErrors.map((error) => (
-            <div key={error} className={styles.error}>{errorMsgs[error]}</div>
+            <div key={error} className={styles.error}>
+              {errorMsgs[error]}
+            </div>
           ))}
         </div>
       </div>
