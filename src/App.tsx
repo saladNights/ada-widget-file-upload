@@ -92,7 +92,7 @@ class App extends React.Component<any, IState> {
 
     const fileExtension = getFileExtension(file.name);
 
-    if (fileExtension && !allowedFileExtensions.includes(fileExtension)) {
+    if (fileExtension && allowedFileExtensions.length && !allowedFileExtensions.includes(fileExtension)) {
       currentErrors.push('allowedFileExtensions');
     }
 
