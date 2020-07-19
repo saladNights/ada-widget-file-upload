@@ -179,8 +179,6 @@ class App extends React.Component<unknown, IState> {
         const presignedDownloadUrl = await this.createGetUrl(fileName, headers['x-amz-version-id']);
 
         this.sendDataToADA(file, headers['x-amz-version-id'], presignedDownloadUrl);
-
-        this.setState({ isLoading: false });
       } catch (error) {
         console.error(error);
         this.setState({
@@ -216,7 +214,7 @@ class App extends React.Component<unknown, IState> {
             });
           }
 
-          this.setState({ isActive: false });
+          this.setState({ isLoading: false, isActive: false });
         },
       );
     }
