@@ -26,7 +26,7 @@ interface IState {
   uploadPath: string;
 }
 
-class App extends React.Component<any, IState> {
+class App extends React.Component<unknown, IState> {
   state = {
     isLoading: false,
     isActive: false,
@@ -78,11 +78,11 @@ class App extends React.Component<any, IState> {
     }
   }
 
-  componentDidUpdate(prevProps: any, prevState: IState) {
+  componentDidUpdate(prevProps: unknown, prevState: IState) {
     if (!widgetSDK.widgetIsActive && prevState.isActive) this.setState({ isActive: false });
   }
 
-  isFileValid = (file: File) => {
+  isFileValid = (file: File): boolean => {
     const { maxFileSize, allowedFileExtensions }: { maxFileSize: number; allowedFileExtensions: string[] } = this.state;
     const currentErrors = [];
 
@@ -107,7 +107,7 @@ class App extends React.Component<any, IState> {
     }
   };
 
-  onChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
+  onChangeHandler = async (e: React.FormEvent<HTMLInputElement>): Promise<void> => {
     const { isLoading, isActive } = this.state;
     e.preventDefault();
 
@@ -115,7 +115,7 @@ class App extends React.Component<any, IState> {
 
     const file = e.currentTarget.files && e.currentTarget.files[0];
 
-    if (file && this.isFileValid(file)) this.uploadFile(file);
+    if (file && this.isFileValid(file)) await this.uploadFile(file);
   };
 
   createGetUrl = async (fileName: string, s3Key: string): Promise<string> => {
@@ -141,7 +141,7 @@ class App extends React.Component<any, IState> {
     return getUrl;
   };
 
-  uploadFile = async (file: File) => {
+  uploadFile = async (file: File): Promise<void> => {
     const { s3AccessKeyId, s3UrlExpire, s3SecretAccessKey, bucketName, uploadPath } = this.state;
     const fileName = file.name;
     const contentType = file.type;
@@ -186,7 +186,7 @@ class App extends React.Component<any, IState> {
     }
   };
 
-  sendDataToADA = (file: File, s3Key: string, presignedDownloadUrl: string) => {
+  sendDataToADA = (file: File, s3Key: string, presignedDownloadUrl: string): void => {
     if (widgetSDK.widgetIsActive) {
       widgetSDK.sendUserData(
         {
