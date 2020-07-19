@@ -24,6 +24,7 @@ interface IState {
   maxFileSize: number;
   allowedFileExtensions: string[];
   uploadPath: string;
+  uploaded: boolean | undefined;
 }
 
 class App extends React.Component<unknown, IState> {
@@ -36,12 +37,14 @@ class App extends React.Component<unknown, IState> {
     bucketName: '',
     errorMsgs: {
       initialized: 'ADA SDK could not be initialized',
+      upload: 'File upload error',
     },
     errors: [],
     validationErrors: [],
     maxFileSize: 10,
     allowedFileExtensions: [],
     uploadPath: '',
+    uploaded: undefined,
   };
 
   componentDidMount() {
@@ -52,6 +55,7 @@ class App extends React.Component<unknown, IState> {
         if (event.type === 'WIDGET_INITIALIZED') {
           this.setState({
             isActive: true,
+            uploaded: false,
             s3AccessKeyId: event.metaData?.s3_access_key_id,
             s3UrlExpire: +event.metaData?.s3_url_expire || 86400,
             s3SecretAccessKey: event.metaData?.s3_secret_access_key,
@@ -70,6 +74,13 @@ class App extends React.Component<unknown, IState> {
             },
           });
         }
+
+        if (event.type === 'WIDGET_INITIALIZATION_FAILED') {
+          this.setState({
+            isActive: false,
+            uploaded: true,
+          });
+        }
       });
     } catch (e) {
       this.setState({
@@ -79,7 +90,7 @@ class App extends React.Component<unknown, IState> {
   }
 
   componentDidUpdate(prevProps: unknown, prevState: IState) {
-    if (!widgetSDK.widgetIsActive && prevState.isActive) this.setState({ isActive: false });
+    if (!widgetSDK.widgetIsActive && prevState.isActive) this.setState({ isActive: false, uploaded: true });
   }
 
   isFileValid = (file: File): boolean => {
@@ -196,7 +207,15 @@ class App extends React.Component<unknown, IState> {
           s3Key,
           presignedDownloadUrl,
         },
-        () => {
+        (event: { type: string }) => {
+          if (event.type === 'SEND_USER_DATA_SUCCESS') {
+            this.setState({ uploaded: true });
+          } else {
+            this.setState({
+              errors: ['upload'],
+            });
+          }
+
           this.setState({ isActive: false });
         },
       );
@@ -204,7 +223,7 @@ class App extends React.Component<unknown, IState> {
   };
 
   render() {
-    const { isLoading, isActive, errorMsgs, errors, validationErrors } = this.state;
+    const { isLoading, isActive, errorMsgs, errors, validationErrors, uploaded } = this.state;
     let btnClass = styles.disabledFileUploadBtn;
 
     if (isActive) btnClass = styles.fileUploadBtn;
@@ -212,11 +231,20 @@ class App extends React.Component<unknown, IState> {
 
     return (
       <div className={styles.wrapper}>
-        <label htmlFor="file" className={btnClass}>
-          <input type="file" name="file" id="file" onChange={this.onChangeHandler} disabled={isLoading || !isActive} />
-          <span className={styles.btnText}>Upload File</span>
-          {isLoading && <div className={styles.loadingSpinner} />}
-        </label>
+        {uploaded === true && <div className={styles.msg}>File is uploaded</div>}
+        {uploaded === false && (
+          <label htmlFor="file" className={btnClass}>
+            <input
+              type="file"
+              name="file"
+              id="file"
+              onChange={this.onChangeHandler}
+              disabled={isLoading || !isActive}
+            />
+            <span className={styles.btnText}>Upload File</span>
+            {isLoading && <div className={styles.loadingSpinner} />}
+          </label>
+        )}
         <div className={styles.errorsWrapper}>
           {errors.map((error) => (
             <div key={error} className={styles.error}>

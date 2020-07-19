@@ -100,8 +100,18 @@ input[type='file'] {
   bottom: 0;
 }
 
-.error {
-  color: #E73B1E;
+.msg {
   margin: 1em auto;
   text-align: center;
+  color: #000;
+}
+
+.error {
+  composes: msg;
+  color: #E73B1E;
+}
+
+.success {
+  composes: msg;
+  color: #58984C;
 }
