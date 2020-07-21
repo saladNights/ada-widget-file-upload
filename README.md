@@ -1,5 +1,7 @@
 Widget based on [Create react App](https://create-react-app.dev/)
 
+`npm install` install all dependencies.
+
 `npm run build` creates a 'build' directory with a production build of your app.
 
 #### ADA App Input Data Parameters
